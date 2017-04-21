@@ -13,14 +13,14 @@ h2 = t2(1); m2 = t2(2);
 
 % Draw hour 1 hand
 hours = h1 + m1/60;
-hourAngle1 = 90 - hours*(360/12);
+hourAngle1 = 90 - hours*(360/24);
 % compute coordinates for pointing end of hour hand and draw it
 %[xhour1, yhour1]= polar2xy(0.6, hourAngle1);
 %plot([0 xhour1], [0 yhour1], 'r-','linewidth',5)
 
 % Draw hour 2 hand
 hours = h2 + m2/60;
-hourAngle2 = 90 - hours*(360/12);
+hourAngle2 = 90 - hours*(360/24);
 % compute coordinates for pointing end of hour hand and draw it
 %[xhour2, yhour2]= polar2xy(0.6, hourAngle2);
 %plot([0 xhour2], [0 yhour2], 'k-','linewidth',5)
