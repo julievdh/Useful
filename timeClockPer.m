@@ -1,4 +1,4 @@
-function timeClockPer(t1,t2,rad)
+function timeClockPer(t1,t2,rad,alpha)
 % Display the time h:m:s on a clock with hour and minute hands.
 % Hour h may be in 12- or 24-hour clock format, i.e., range is [0..24].
 % Minute m and second s are in the range [0..59].
@@ -25,4 +25,4 @@ hourAngle2 = 90 - hours*(360/24);
 %[xhour2, yhour2]= polar2xy(0.6, hourAngle2);
 %plot([0 xhour2], [0 yhour2], 'k-','linewidth',5)
 
-plot_arc(deg2rad(hourAngle1),deg2rad(hourAngle2),0,0,rad)
+plot_arc(deg2rad(hourAngle1),deg2rad(hourAngle2),0,0,rad,alpha)

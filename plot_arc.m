@@ -1,4 +1,4 @@
-function P = plot_arc(a,b,h,k,r)
+function P = plot_arc(a,b,h,k,r,alpha)
 % Plot a circular arc as a pie wedge.
 % a is start of arc in radians, 
 % b is end of arc in radians, 
@@ -11,7 +11,7 @@ x = r*cos(t) + h;
 y = r*sin(t) + k;
 x = [x h x(1)];
 y = [y k y(1)];
-P = patch(x,y,'r','facealpha',0.5);
+P = patch(x,y,'r','facealpha',alpha,'edgealpha',0);
 axis([h-r-1 h+r+1 k-r-1 k+r+1]) 
 axis square;
 if ~nargout
