@@ -8,7 +8,7 @@
 %
 %'Yin' is a vector specifying the equally spaced values along the y-axis.
 %
-%'dist_in' (dist_in > 0) is a matrix with dimensions length(Yin) x 
+%'dist_in' (dist_in > 0) is a matrix with dimensions length(Yin) x
 %length(Xin), whose values specify a 2D discrete probability distribution.
 %The distribution does not need to be normalized.
 %
@@ -109,14 +109,14 @@ if nargin==4
 elseif nargin~=3
     error('Incorrect number of input arguments.')
 end
-    
+
 %create column distribution and pick random number
 col_dist=sum(dist_in,1);
 
 %pick column distribution type
 if nargin==3;
     %if no res parameter, simply update X/Yin2
-    col_dist=col_dist/sum(col_dist);
+    col_dist=col_dist/sum(col_dist(~isinf(col_dist)));
     Xin2=Xin;
     Yin2=Yin;
 else
@@ -143,12 +143,12 @@ x0=Xin2(ind1);
 
 %find corresponding indices and weights in the other dimension
 [val_temp,ind_temp]=sort((x0-Xin).^2);
-
-if val_temp(1)<eps %if we land on an original value
-    row_dist=dist_in(:,ind_temp(1));
+k = 1; % first index, used to find alternative if needed
+if val_temp(k)<eps %if we land on an original value
+    row_dist=dist_in(:,ind_temp(k));
 else %if we land inbetween, perform linear interpolation
-    low_val=min(ind_temp(1:2));
-    high_val=max(ind_temp(1:2));
+    low_val=min(ind_temp(k:k+1));
+    high_val=max(ind_temp(k:k+1));
     
     Xlow=Xin(low_val);
     Xhigh=Xin(high_val);
@@ -161,13 +161,18 @@ end
 
 %pick column distribution type
 if nargin==3;
-    row_dist=row_dist/sum(row_dist);
+    row_dist=row_dist/nansum(row_dist);
 else
     row_dist=interp1(Yin,row_dist,Yin2,'pchip');
-    row_dist=row_dist/sum(row_dist);
+    row_dist=row_dist/nansum(row_dist);
 end
 
 %generate random value index
+if nansum(row_dist) == 0
+    k = k+1;
+    row_dist=dist_in(:,ind_temp(k)); % this is a catch if needed - jvdh
+end
+
 ind2=gendist(row_dist,1,1);
 
 %save first value
@@ -197,9 +202,9 @@ function T = gendist(P,N,M,varargin)
 %Conceptual EXAMPLE:
 %
 %If P = [0.2 0.4 0.4] (note sum(P)=1), then T can only take on values of 1,
-%2 or 3, corresponding to the possible indices of P.  If one calls 
+%2 or 3, corresponding to the possible indices of P.  If one calls
 %gendist(P,1,10), then on average the output T should contain two 1's, four
-%2's and four 3's, in accordance with the values of P, and a possible 
+%2's and four 3's, in accordance with the values of P, and a possible
 %output might look like:
 %
 %T = gendist(P,1,10)
@@ -246,10 +251,10 @@ if or(N<1,M<1)
 end
 
 %normalize P
-Pnorm=[0 P]/sum(P);
+Pnorm=[0 P]/nansum(P(~isinf(P)));
 
 %create cumlative distribution
-Pcum=cumsum(Pnorm);
+Pcum=cumsum(Pnorm); Pcum = sort(Pcum);
 
 %create random matrix
 N=round(N);
@@ -258,7 +263,7 @@ R=rand(1,N*M);
 
 %calculate T output matrix
 V=1:length(P);
-[~,inds] = histc(R,Pcum); 
+[~,inds] = histc(R,Pcum);
 T = V(inds);
 
 %shape into output matrix
