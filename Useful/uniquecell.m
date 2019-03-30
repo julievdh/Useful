@@ -29,3 +29,4 @@ function [Au, idx ,idx2] = uniquecell(A)
         Au = A(idx);
     end
 end
+    
